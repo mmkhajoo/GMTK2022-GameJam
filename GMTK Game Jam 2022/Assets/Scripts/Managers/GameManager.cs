@@ -1,9 +1,11 @@
 ﻿using System;
+using DefaultNamespace;
 using Managers.Audio_Manager;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Managers
 {
@@ -13,25 +15,14 @@ namespace Managers
 
         [SerializeField] private GameObject _panel;
 
-        [SerializeField] private TextMeshProUGUI _gemText;
-
-
-        [SerializeField] private GameObject _resetButton;
-        [SerializeField] private GameObject _gemPanel;
-
-
-        public int CurrentLevel => PlayerPrefs.GetInt("Level", 1);
-
-
-        private const String Level = "Level";
-
-        private MapManager _mapManager;
-
-        [Header("Gem Events")] [SerializeField]
-        private UnityEvent _onGemAdded;
-
-        [SerializeField] private UnityEvent _onGedDecreased;
         [SerializeField] private AudioSource audioSource;
+        [SerializeField] private Player _player;
+        [SerializeField] private TextMeshProUGUI _timerText;
+        [SerializeField] private Slider _playerhealthSlider;
+
+        [SerializeField] private float _playerDiceTimer;
+        private float tempTimer;
+
 
 
         private void Awake()
@@ -41,94 +32,50 @@ namespace Managers
 
             DontDestroyOnLoad(gameObject);
 
-            if (!PlayerPrefs.HasKey("Level"))
-            {
-                PlayerPrefs.SetInt("Level", 1);
-            }
 
-            LoadMainMenu();
+          //  LoadMainMenu();
         }
 
         private void Start()
         {
-            _mapManager = GetComponent<MapManager>();
-
-            UpdateGem();
+            tempTimer = _playerDiceTimer;
+            _playerhealthSlider.maxValue = _player.Health;
+            _playerhealthSlider.value = _player.Health;
         }
 
         private void Update()
         {
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if(tempTimer > 0)
             {
-                _panel.SetActive(!_panel.activeInHierarchy);
+                tempTimer -= Time.deltaTime;
+                _timerText.text = (int)tempTimer + " s";
+                if (tempTimer <= 0)
+                {
+                    var rand = UnityEngine.Random.Range(0, 4);
+                    _player.RollOftheDice(rand);
+                    tempTimer = _playerDiceTimer;
+                }
             }
-#endif
+        }
+
+        public void OnHealthUpdate()
+        {
+            _playerhealthSlider.value = _player.Health;
         }
 
         public void LoseGame()
         {
             Debug.Log("You Lost Game.");
 
-            if (PlayerPrefs.HasKey("Checkpoint"))
-            {
-                if (PlayerPrefs.HasKey("DeadMan"))
-                {
-                    _mapManager.DeadManGoNextLevel(() =>
-                    {
-                        if (Check_Checkpoint())
-                            return;
-
-                        Invoke("LoadLevel", 0.5f);
-                    });
-                }
-                else
-                {
-                    _mapManager.FirstTimeShowMap(() => { Invoke("LoadLevel", 0.5f); });
-                }
-
-                return;
-            }
-
-            Invoke("LoadLevel", 0.5f);
+            SceneManager.LoadScene(0);
 
             //TODO : Show the Lose Panel;
         }
 
-        private bool Check_Checkpoint()
-        {
-            if (PlayerPrefs.GetInt("DeadMan") == CurrentLevel)
-            {
-                PlayerPrefs.SetInt("Gems", PlayerPrefs.GetInt("Gems") - 1);
-
-                UpdateGem();
-
-                _onGedDecreased?.Invoke();
-
-                _mapManager.ResetToLastCheckPoint();
-
-                PlayerPrefs.SetInt("Level", PlayerPrefs.GetInt("Checkpoint"));
-
-                _mapManager.FirstTimeShowMap(() => { Invoke("LoadLevel", 0.5f); });
-
-                return true;
-            }
-
-            return false;
-        }
 
         public void WinGame()
         {
             Debug.Log("You Won Game");
-
-            if (PlayerPrefs.HasKey("Checkpoint"))
-            {
-                _mapManager.PlayerSetPosition();
-            }
-
-            IncreaseLevel();
-
-            LoadLevel();
 
             //TODO : Show the Win Panel;
         }
@@ -138,29 +85,6 @@ namespace Managers
             LoadLevel();
         }
 
-        public void GoToNextLevel()
-        {
-            IncreaseLevel();
-
-            LoadLevel();
-        }
-
-        public void GoPreviousLevel()
-        {
-            DecreaseLevel();
-
-            LoadLevel();
-        }
-
-        private void IncreaseLevel()
-        {
-            PlayerPrefs.SetInt(Level, PlayerPrefs.GetInt(Level) + 1);
-        }
-
-        private void DecreaseLevel()
-        {
-            PlayerPrefs.SetInt(Level, PlayerPrefs.GetInt(Level) - 1);
-        }
 
         private void LoadMainMenu()
         {
@@ -169,66 +93,8 @@ namespace Managers
 
         public void LoadLevel()
         {
-            int level = PlayerPrefs.GetInt(Level, 1);
-
-            if (level == SceneManager.sceneCountInBuildSettings)
-            {
-                level = SceneManager.sceneCountInBuildSettings - 2;
-                PlayerPrefs.SetInt(Level, level);
-            }
-            else if (level <= 1)
-            {
-                PlayerPrefs.SetInt(Level, 2);
-                level = 2;
-            }
-
-            if (level >= 3)
-            {
-                _resetButton.SetActive(true);
-            }
-            else
-            {
-                _resetButton.SetActive(false);
-            }
-            
-
-            if (level >= 5)
-            {
-                _gemPanel.SetActive(true);
-            }
-            else
-            {
-                _gemPanel.SetActive(false);
-            }
-
-            if (level == 2)//Intro
-            {
-                AudioManager.instance.PauseSoundEffect(null);
-            }
-            if (level == 3)//Level 1
-            {
-                AudioManager.instance.ContinueSoundEffect(null);
-            }
-            SceneManager.LoadScene(level);
+            SceneManager.LoadScene(1);
         }
 
-        #region Gem
-
-        public void AddGem()
-        {
-            PlayerPrefs.SetInt("Gems", PlayerPrefs.GetInt("Gems", 0) + 1);
-
-            _gemText.SetText(PlayerPrefs.GetInt("Gems").ToString());
-
-            AudioManager.instance.PlaySoundEffect(audioSource,AudioTypes.SoulShardCollect);
-            _onGemAdded?.Invoke();
-        }
-
-        private void UpdateGem()
-        {
-            _gemText.SetText(PlayerPrefs.GetInt("Gems").ToString());
-        }
-
-        #endregion
     }
 }

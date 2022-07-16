@@ -6,9 +6,9 @@ namespace WeaponSystem
 {
     public enum SubWeaponType
     {
-        Katana = 1,
-        Axe = 2,
-        Bomb = 3,
-        Bullet = 4
+        Katana = 0,
+        Axe = 1,
+        Bomb = 2,
+        Bullet = 3
     }
 }

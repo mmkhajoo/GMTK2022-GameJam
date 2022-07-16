@@ -22,7 +22,7 @@ namespace DefaultNamespace
         #region Fields
 
         [SerializeField]
-        private float _health;
+        private int _health;
 
         private PlayerStateType _currentPlayerStateType = PlayerStateType.None;
 
@@ -53,6 +53,7 @@ namespace DefaultNamespace
         [SerializeField] private UnityEvent OnPlayerJumped;
         [SerializeField] private UnityEvent OnTakeDamage;
         [SerializeField] private UnityEvent OnEndImmunity;
+        [SerializeField] private UnityEvent OnDiceTimerDone;
 
 
         [Header("Audio Source")] [SerializeField]
@@ -63,9 +64,11 @@ namespace DefaultNamespace
 
         #region Private Properties
 
+        public int Health => _health;
+
         private bool isPlayerMoving => _playerMovement.VerticalMove != 0f || _playerMovement.HorizontalMove != 0f;
 
-        public CharacterType CharacterType => throw new NotImplementedException();
+        public CharacterType CharacterType => CharacterType.Player;
 
         public bool IsImmune
         {
@@ -97,7 +100,8 @@ namespace DefaultNamespace
             _circleCollider2D = GetComponent<CircleCollider2D>();
             _rigidbody2D = GetComponent<Rigidbody2D>();
 
-            _characterController2D.SetWeapon(_weaponData.weapons[3]);
+            var randomWeapon = UnityEngine.Random.Range(0, 4);
+            _characterController2D.SetWeapon(_weaponData.weapons[randomWeapon]);
 
             _playerMovement.OnJump += () =>
             {
@@ -125,6 +129,10 @@ namespace DefaultNamespace
 
         private void Update()
         {
+            if (Input.GetMouseButton(1))
+            {
+                TakeDamage(50);
+            }
             if (isPlayerMoving)
             {
                 SetPlayerState(PlayerStateType.Walking);
@@ -155,6 +163,12 @@ namespace DefaultNamespace
 
             _currentPlayerStateType = playerStateType;
            // _onPlayerStateChanged?.Invoke(_currentPlayerStateType);
+        }
+
+        public void RollOftheDice(int weaponNumber)
+        {
+            OnDiceTimerDone?.Invoke();
+            _characterController2D.SetWeapon(_weaponData.weapons[weaponNumber]);
         }
 
         public void Enable()
@@ -232,10 +246,7 @@ namespace DefaultNamespace
         public void TakeDamage(int hitDamage)
         {
             if (IsImmune)
-            {
-
                 return;
-            }
 
             var tempHealth = _health - hitDamage;
             if (tempHealth <= 0) 

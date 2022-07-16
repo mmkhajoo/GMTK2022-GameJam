@@ -11,11 +11,11 @@ namespace Objects
             {
                 Debug.Log("Checkpoint Seted");
                 
-                var level = GameManager.instance.CurrentLevel+1;
+           //     var level = GameManager.instance.CurrentLevel+1;
                 
-                PlayerPrefs.SetInt("PreviousCheckpoint",PlayerPrefs.GetInt("Checkpoint",level));
+             //   PlayerPrefs.SetInt("PreviousCheckpoint",PlayerPrefs.GetInt("Checkpoint",level));
 
-                PlayerPrefs.SetInt("Checkpoint", level);
+          //      PlayerPrefs.SetInt("Checkpoint", level);
                 
                 //TODO : Change Head Sprite
             }

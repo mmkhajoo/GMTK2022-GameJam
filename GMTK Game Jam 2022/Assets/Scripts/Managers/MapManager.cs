@@ -57,8 +57,8 @@ namespace Managers
 
         public void PlayerSetPosition()
         {
-            var level = GameManager.instance.CurrentLevel;
-            _player.transform.position = _paths[level - 1].transform.position;
+          //  var level = GameManager.instance.CurrentLevel;
+          //  _player.transform.position = _paths[level - 1].transform.position;
         }
         
         private void SetPlayerAndDeadManPosition()
@@ -66,11 +66,11 @@ namespace Managers
             if(!PlayerPrefs.HasKey("Checkpoint"))
                 return;
             
-            var level = GameManager.instance.CurrentLevel;
+         //   var level = GameManager.instance.CurrentLevel;
             var deadman = PlayerPrefs.GetInt(DeadMan);
 
 
-            _player.transform.position = _paths[level - 1].transform.position;
+         //   _player.transform.position = _paths[level - 1].transform.position;
             _deadMan.transform.position = _paths[deadman - 1].transform.position;
         }
 
@@ -94,10 +94,10 @@ namespace Managers
         
         private void MovePlayerAndDeadMan(Action onDone = null)
         {
-            var level = GameManager.instance.CurrentLevel;
+         //   var level = GameManager.instance.CurrentLevel;
             var deadman = PlayerPrefs.GetInt(DeadMan);
 
-            LeanTween.move(_player, _paths[level - 1].transform, 1f);
+       //     LeanTween.move(_player, _paths[level - 1].transform, 1f);
             LeanTween.move(_deadMan, _paths[deadman - 1].transform, 1f).setOnComplete(onDone);
         }
 

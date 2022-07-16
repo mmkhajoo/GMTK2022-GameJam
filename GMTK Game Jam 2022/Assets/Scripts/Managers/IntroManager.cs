@@ -6,7 +6,7 @@ namespace Managers
     {
         public void GoNextLevel()
         {
-            GameManager.instance.GoToNextLevel();
+         //   GameManager.instance.GoToNextLevel();
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Objects
 
         private void Awake()
         {
-            var level = GameManager.instance.CurrentLevel;
-            gemName = "Gem " + "Level " + level + name;
+           // var level = GameManager.instance.CurrentLevel;
+          //  gemName = "Gem " + "Level " + level + name;
             
             if (PlayerPrefs.HasKey(gemName))
                 gameObject.SetActive(false);
@@ -43,7 +43,7 @@ namespace Objects
         
         private void AddGem()
         {
-            GameManager.instance.AddGem();
+           // GameManager.instance.AddGem();
             PlayerPrefs.SetInt(gemName, 0);
         }
     }
