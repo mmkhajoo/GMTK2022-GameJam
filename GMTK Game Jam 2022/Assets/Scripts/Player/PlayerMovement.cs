@@ -14,6 +14,7 @@ namespace DefaultNamespace
         public float VerticalMove => _verticalMove;
         public float HorizontalMove => _horizontalMove;
         public bool IsGrounded => controller.IsGrounded;
+        public bool IsAttackDone => controller.IsAttackDone;
 
 
         public CharacterController2D controller;
@@ -25,6 +26,9 @@ namespace DefaultNamespace
 
         private bool _jump = false;
         private bool _waitForJumpButtonUp;
+        private bool _attack = false;
+        private bool _canAttack;
+        private Vector2 _mousePosition;
 
         private ConstantForce2D _constantForce2D;
 
@@ -33,12 +37,13 @@ namespace DefaultNamespace
         private void Awake()
         {
             _constantForce2D = GetComponent<ConstantForce2D>();
-
+            _canAttack = true;
             controller.OnJumpAvailable += JumpAvailable;
             controller.OnLandEvent.AddListener(() =>
             {
                 OnLand?.Invoke();
             });
+
         }
 
         private void JumpAvailable()
@@ -55,7 +60,25 @@ namespace DefaultNamespace
             _horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
 
             // Debug.DrawLine(transform.position, transform.position + transform.right * 10, Color.yellow);
-            
+
+            if (IsAttackDone)
+                _canAttack = true;
+
+            GetInputs();
+        }
+
+
+        private void GetInputs()
+        {
+            if (Input.GetMouseButton(0) && _canAttack)
+            {
+                controller.SetAttackTimer();
+                _attack = true;
+                _canAttack = false;
+                _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            }
+
             if (Input.GetButton("Jump") && !_waitForJumpButtonUp)
             {
                 _jump = true;
@@ -82,7 +105,6 @@ namespace DefaultNamespace
             }
         }
 
-
         private void FixedUpdate()
         {
             if (_constantForce2D.force.y != 0f)
@@ -95,6 +117,13 @@ namespace DefaultNamespace
             }
 
             controller.Move(_verticalMove * Time.fixedDeltaTime, _horizontalMove * Time.fixedDeltaTime, false, _jump);
+
+            if (_attack)
+            {
+                controller.Attack(_mousePosition);
+                _attack = false;
+            }
+
         }
     }
 }

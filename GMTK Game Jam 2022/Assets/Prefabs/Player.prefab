@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1120217475676964983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2231678257674427275}
+  m_Layer: 6
+  m_Name: ProjectilePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2231678257674427275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1120217475676964983}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.978, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1813503968741676673}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1813503967510469677
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,7 +239,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1813503968741676673}
-  - component: {fileID: 1813503968741676672}
+  - component: {fileID: 376901324163440437}
   - component: {fileID: 1813503968741676675}
   - component: {fileID: 1813503968741676674}
   - component: {fileID: 1813503968741676687}
@@ -242,10 +273,12 @@ Transform:
   - {fileID: 1813503969248861384}
   - {fileID: 1813503967510469674}
   - {fileID: 1813503969352972173}
+  - {fileID: 5616927037943885174}
+  - {fileID: 2231678257674427275}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1813503968741676672
+--- !u!114 &376901324163440437
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -258,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 1813503968741676675}
-  runSpeed: 30
+  runSpeed: 40
 --- !u!114 &1813503968741676675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,7 +315,12 @@ MonoBehaviour:
   m_GroundCheck: {fileID: 1813503967510469674}
   m_CeilingCheck: {fileID: 1813503969352972173}
   m_CrouchDisableCollider: {fileID: 0}
+  _porojectilePos: {fileID: 2231678257674427275}
+  _meleePosDetection: {fileID: 5616927037943885174}
   OnLandEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackEvent:
     m_PersistentCalls:
       m_Calls: []
   OnCrouchEvent:
@@ -422,14 +460,7 @@ MonoBehaviour:
   OnPlayerJumped:
     m_PersistentCalls:
       m_Calls: []
-  OnTransitioned:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPlayerGotOut:
-    m_PersistentCalls:
-      m_Calls: []
   _audioSource: {fileID: 9072542619276463523}
-  _transitionAudioSource: {fileID: 8536020002078579545}
   _walkAudioSource: {fileID: 2220539272146128192}
 --- !u!82 &9072542619276463523
 AudioSource:
@@ -835,4 +866,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1813503968741676673}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7152546492299296351
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5616927037943885174}
+  m_Layer: 6
+  m_Name: MeleeDetectionPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5616927037943885174
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7152546492299296351}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.091, y: -0.19, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1813503968741676673}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

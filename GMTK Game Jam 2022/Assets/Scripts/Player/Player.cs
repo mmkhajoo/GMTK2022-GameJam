@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using Managers;
 using Managers.Audio_Manager;
 using Objects;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using WeaponSystem;
 
 namespace DefaultNamespace
 {
-    public class Player : MonoBehaviour, IPlayer
+    public class Player : MonoBehaviour, IPlayer, IDamageable
     {
         public Transform Transform => transform;
 
@@ -19,7 +21,8 @@ namespace DefaultNamespace
 
         #region Fields
 
-        private ObjectController _objectTransitionedTo;
+        [SerializeField]
+        private float _health;
 
         private PlayerStateType _currentPlayerStateType = PlayerStateType.None;
 
@@ -29,12 +32,17 @@ namespace DefaultNamespace
 
         private PlayerMovement _playerMovement;
         private CharacterController2D _characterController2D;
-        private GravityController _gravityController;
         private DashController _dashController;
         private ConstantForce2D _constantForce2D;
         private BoxCollider2D _boxCollider2D;
         private CircleCollider2D _circleCollider2D;
         private Rigidbody2D _rigidbody2D;
+        private WeaponData _weaponData;
+
+        [SerializeField]
+        private float immuneTime;
+        private bool _isImmune;
+        private float tempTime;
 
         #endregion
 
@@ -43,14 +51,13 @@ namespace DefaultNamespace
         [Header("Events")] [SerializeField] private PlayerStateEvent _onPlayerStateChanged;
         [SerializeField] private UnityEvent OnPlayerLand;
         [SerializeField] private UnityEvent OnPlayerJumped;
-        [SerializeField] private UnityEvent OnTransitioned;
-        [SerializeField] private UnityEvent OnPlayerGotOut;
+        [SerializeField] private UnityEvent OnTakeDamage;
+        [SerializeField] private UnityEvent OnEndImmunity;
 
 
         [Header("Audio Source")] [SerializeField]
         private AudioSource _audioSource;
 
-        [SerializeField] private AudioSource _transitionAudioSource;
         [SerializeField] private AudioSource _walkAudioSource;
         #endregion
 
@@ -58,42 +65,60 @@ namespace DefaultNamespace
 
         private bool isPlayerMoving => _playerMovement.VerticalMove != 0f || _playerMovement.HorizontalMove != 0f;
 
+        public CharacterType CharacterType => throw new NotImplementedException();
+
+        public bool IsImmune
+        {
+            get
+            {
+                return _isImmune;
+            }
+            set
+            {
+                _isImmune = value;
+            }
+        }
+
         #endregion
 
-        private bool _isTransitioning;
 
         private bool _collisionTriggered;
 
         private void Awake()
         {
+            var weaponManager = Resources.Load("WeaponManager") as WeaponManager;
+            _weaponData = weaponManager.Get(CharacterType.Player);
+
             _playerMovement = GetComponent<PlayerMovement>();
             _characterController2D = GetComponent<CharacterController2D>();
-            _gravityController = GetComponent<GravityController>();
             _dashController = GetComponent<DashController>();
             _constantForce2D = GetComponent<ConstantForce2D>();
             _boxCollider2D = GetComponent<BoxCollider2D>();
             _circleCollider2D = GetComponent<CircleCollider2D>();
             _rigidbody2D = GetComponent<Rigidbody2D>();
 
+            _characterController2D.SetWeapon(_weaponData.weapons[3]);
+
             _playerMovement.OnJump += () =>
             {
                 OnPlayerJumped?.Invoke();
-                AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Jump);
+               // AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Jump);
             };
             _playerMovement.OnLand += () =>
             {
                 OnPlayerLand?.Invoke();
-                AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Land);
+               // AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Land);
             };
+
             _onPlayerStateChanged.AddListener(state =>
             {
                 if (state == PlayerStateType.Walking)
                 {
-                    AudioManager.instance.PlaySoundEffect(_walkAudioSource, AudioTypes.Walk);
+                   // AudioManager.instance.PlaySoundEffect(_walkAudioSource, AudioTypes.Walk);
                 }
                 else
                 {
-                    AudioManager.instance.StopSoundEffect(_walkAudioSource);
+                   // AudioManager.instance.StopSoundEffect(_walkAudioSource);
                 }
             });
         }
@@ -110,17 +135,17 @@ namespace DefaultNamespace
                 SetPlayerState(PlayerStateType.Idle);
             }
 
-            if (Input.GetKeyDown(KeyCode.E) && !_isTransitioning)
+            if (IsImmune)
             {
-                if (_objectTransitionedTo == null)
+                tempTime += Time.deltaTime;
+                if(tempTime >= immuneTime)
                 {
-                    CheckTransitionObjects();
-                }
-                else
-                {
-                    GetOutFromItem();
+                    tempTime = 0;
+                    _isImmune = false;
+                    OnEndImmunity?.Invoke();
                 }
             }
+
         }
 
         private void SetPlayerState(PlayerStateType playerStateType)
@@ -129,7 +154,7 @@ namespace DefaultNamespace
                 return;
 
             _currentPlayerStateType = playerStateType;
-            _onPlayerStateChanged?.Invoke(_currentPlayerStateType);
+           // _onPlayerStateChanged?.Invoke(_currentPlayerStateType);
         }
 
         public void Enable()
@@ -152,94 +177,6 @@ namespace DefaultNamespace
             _circleCollider2D.isTrigger = true;
             _constantForce2D.enabled = false;
             _dashController.enabled = false;
-        }
-
-        private void CheckTransitionObjects()
-        {
-            float minDistance = Single.MaxValue;
-
-            ObjectController selectedObjectController = null;
-
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, _searchObjectRadius);
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                var currentGameObject = colliders[i].gameObject;
-
-                if (currentGameObject != gameObject)
-                {
-                    if (currentGameObject.TryGetComponent(out ObjectController objectController))
-                    {
-                        var distance = Vector3.Distance(transform.position, objectController.transform.position);
-
-                        if (distance < minDistance && objectController.CompareTag("Transitionable"))
-                        {
-                            selectedObjectController = objectController;
-                            minDistance = distance;
-                        }
-                    }
-                }
-            }
-
-            if (selectedObjectController != null)
-            {
-                Transition(selectedObjectController);
-            }
-        }
-
-        public void Transition(ObjectController transitableObject)
-        {
-            _objectTransitionedTo = transitableObject;
-
-            _isTransitioning = true;
-
-            AudioManager.instance.PlaySoundEffect(_transitionAudioSource, AudioTypes.PossesIn);
-
-            _circleCollider2D.enabled = false;
-            _boxCollider2D.enabled = false;
-
-            LeanTween.move(gameObject, transitableObject.transform, _transitionTime);
-            LeanTween.scale(gameObject, Vector3.zero, _transitionTime).setOnComplete(OnTransitionCompleted);
-        }
-
-        private void OnTransitionCompleted()
-        {
-            Disable();
-
-            _isTransitioning = false;
-
-            _objectTransitionedTo.SetPlayer(this);
-            
-            OnTransitioned?.Invoke();
-        }
-
-        public void GetOutFromItem()
-        {
-            transform.position = _objectTransitionedTo.Transform.position;
-            
-            var targetPosition = _objectTransitionedTo.Transform.position + Vector3.down * 0.1f;
-
-            _isTransitioning = true;
-            
-            LeanTween.move(gameObject, targetPosition, _transitionTime);
-
-            LeanTween.scale(gameObject, Vector3.one, _transitionTime).setOnComplete(() =>
-            {
-                _isTransitioning = false;
-                
-                _circleCollider2D.enabled = true;
-                _boxCollider2D.enabled = true;
-
-                Enable();
-
-                _objectTransitionedTo.PlayerGotOut();
-                _objectTransitionedTo = null;
-
-                _gravityController.SetGravity();
-                
-                OnPlayerGotOut?.Invoke();
-            });
-            
-            AudioManager.instance.PlaySoundEffect(_transitionAudioSource, AudioTypes.PossesOut);
         }
 
         public void Die()
@@ -291,7 +228,28 @@ namespace DefaultNamespace
                 _collisionTriggered = true;
             }
         }
+
+        public void TakeDamage(int hitDamage)
+        {
+            if (IsImmune)
+            {
+
+                return;
+            }
+
+            var tempHealth = _health - hitDamage;
+            if (tempHealth <= 0) 
+            {
+                Die();
+                return;
+            }
+
+            _health -= hitDamage;
+            _isImmune = true;
+            OnTakeDamage?.Invoke();
+        }
     }
+    
 
     [Serializable]
     public class PlayerStateEvent : UnityEvent<PlayerStateType>
