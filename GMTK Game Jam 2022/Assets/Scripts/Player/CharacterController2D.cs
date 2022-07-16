@@ -75,7 +75,7 @@ public class CharacterController2D : MonoBehaviour
 
                 if (!wasGrounded)
                 {
-                    OnLandEvent.Invoke();
+                    OnLandEvent?.Invoke();
 
                     OnJumpAvailable?.Invoke();
                     _isJumpCalled = false;
@@ -108,7 +108,7 @@ public class CharacterController2D : MonoBehaviour
                 if (!m_wasCrouching)
                 {
                     m_wasCrouching = true;
-                    OnCrouchEvent.Invoke(true);
+                    OnCrouchEvent?.Invoke(true);
                 }
 
                 // Reduce the speed by the crouchSpeed multiplier

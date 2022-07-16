@@ -18,13 +18,15 @@ namespace DefaultNamespace
 
         public CharacterController2D controller;
 
-        [SerializeField] private float runSpeed = 40f;
+        protected float defaultRunSpeed;
 
-        private float _verticalMove = 0f;
-        private float _horizontalMove = 0f;
+        [SerializeField] protected float runSpeed = 40f;
 
-        private bool _jump = false;
-        private bool _waitForJumpButtonUp;
+        protected float _verticalMove = 0f;
+        protected float _horizontalMove = 0f;
+
+        protected bool _jump = false;
+        protected bool _waitForJumpButtonUp;
 
         private ConstantForce2D _constantForce2D;
 
@@ -32,6 +34,8 @@ namespace DefaultNamespace
 
         private void Awake()
         {
+            defaultRunSpeed = runSpeed;
+            
             _constantForce2D = GetComponent<ConstantForce2D>();
 
             controller.OnJumpAvailable += JumpAvailable;
@@ -49,11 +53,12 @@ namespace DefaultNamespace
             }
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             _verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
             _horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-
+            
+            
             // Debug.DrawLine(transform.position, transform.position + transform.right * 10, Color.yellow);
             
             if (Input.GetButton("Jump") && !_waitForJumpButtonUp)

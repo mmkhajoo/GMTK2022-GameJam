@@ -94,7 +94,10 @@ public class DashController : MonoBehaviour
 
         _dashClicked = true;
 
-        AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Dash);
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Dash);
+        }
 
         _onDash?.Invoke();
     }
