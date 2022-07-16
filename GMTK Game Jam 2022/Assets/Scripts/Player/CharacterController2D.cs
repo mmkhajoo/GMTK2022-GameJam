@@ -1,13 +1,16 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using WeaponSystem;
 
 public class CharacterController2D : MonoBehaviour
 {
     public bool IsGrounded => m_Grounded;
+    public bool IsAttackDone => !_attack && !_attackTimeActive;
 
     public event Action OnJumpAvailable;
-
+    public event Action<SubWeaponType> OnAttack;
+    public event Action<SubWeaponType> OnMeleeAttackDone;
 
     [SerializeField] private float m_JumpForce = 400f; // Amount of force added when the player jumps.
 
@@ -16,7 +19,8 @@ public class CharacterController2D : MonoBehaviour
     private float _jumpTimeInterval = 0f;
 
 
-    [Range(0, 1)] [SerializeField]
+    [Range(0, 1)]
+    [SerializeField]
     private float m_CrouchSpeed = .36f; // Amount of maxSpeed applied to crouching movement. 1 = 100%
 
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f; // How much to smooth out the movement
@@ -26,6 +30,10 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private Transform m_CeilingCheck; // A position marking where to check for ceilings
     [SerializeField] private Collider2D m_CrouchDisableCollider; // A collider that will be disabled when crouching
 
+    [Header("Attacking")]
+    [SerializeField] private Transform _porojectilePos;
+    [SerializeField] private Transform _meleePosDetection;
+
     const float k_GroundedRadius = .01f; // Radius of the overlap circle to determine if grounded
     private bool m_Grounded; // Whether or not the player is grounded.
     const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
@@ -34,7 +42,15 @@ public class CharacterController2D : MonoBehaviour
     private bool m_FacingRight = true; // For determining which way the player is currently facing.
     private Vector3 m_Velocity = Vector3.zero;
 
-    [Header("Events")] [Space] public UnityEvent OnLandEvent;
+    private Weapon _weapon;
+    private bool _attack;
+    private bool _attackTimeActive;
+    private float tempFireRate;
+
+    [Header("Events")]
+    [Space]
+    public UnityEvent OnLandEvent;
+    public UnityEvent OnAttackEvent;
 
     [System.Serializable]
     public class BoolEvent : UnityEvent<bool>
@@ -84,8 +100,24 @@ public class CharacterController2D : MonoBehaviour
                 }
             }
         }
+
+        if (_attackTimeActive)
+        {
+            tempFireRate += Time.deltaTime;
+            if (tempFireRate >= _weapon.fireRate)
+            {
+                tempFireRate = 0;
+                _attack = false;
+                _attackTimeActive = false;
+            }
+        }
+
     }
 
+    public void SetAttackTimer()
+    {
+        _attackTimeActive = true;
+    }
 
     public void Move(float verticalMove, float horizontalMove, bool crouch, bool jump)
     {
@@ -100,6 +132,7 @@ public class CharacterController2D : MonoBehaviour
         // }
 
         //only control the player if grounded or airControl is turned on
+
         if (m_Grounded || m_AirControl)
         {
             // If crouching
@@ -146,70 +179,37 @@ public class CharacterController2D : MonoBehaviour
             // And then smoothing it out and applying it to the character
             m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity,
                 m_MovementSmoothing);
-            
-            
+
+
             // If the input is moving the player right and the player is facing left...
             if (horizontalMove != 0f)
             {
-                if (horizontalMove > 0 )
+                if (horizontalMove > 0)
                 {
-                    if (transform.rotation.eulerAngles.z == 0)
+                    if (m_FacingRight)
                     {
-                        transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 0,
-                            transform.localRotation.eulerAngles.z));
+                        //TODO : Forward animation
                     }
                     else
                     {
-                        transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 180,
-                            transform.localRotation.eulerAngles.z));
+                        //TODO :BackWard animation
                     }
                 }
                 else
                 {
-                    if (transform.rotation.eulerAngles.z == 0)
+                    if (!m_FacingRight)
                     {
-                        transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 180,
-                            transform.localRotation.eulerAngles.z));
+                        //TODO : Forward animation
                     }
                     else
                     {
-                        transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 0,
-                            transform.localRotation.eulerAngles.z));
+                        //TODO :BackWard animation
                     }
                 }
             }
 
+            Flip();
 
-            if (verticalMove != 0)
-            {
-                if (verticalMove > 0 )
-                {
-                    if (transform.rotation.eulerAngles.z == 90)
-                    {
-                        transform.localRotation = Quaternion.Euler(new Vector3(0, transform.localRotation.eulerAngles.y,
-                            transform.localRotation.eulerAngles.z));
-                    }
-                    else
-                    {
-                        transform.localRotation = Quaternion.Euler(new Vector3(180, transform.localRotation.eulerAngles.y,
-                            transform.localRotation.eulerAngles.z));
-                    }
-                }
-                else
-                {
-                    if (transform.rotation.eulerAngles.z == 90)
-                    {
-                        transform.localRotation = Quaternion.Euler(new Vector3(180, transform.localRotation.eulerAngles.y,
-                            transform.localRotation.eulerAngles.z));
-                    }
-                    else
-                    {
-                        transform.localRotation = Quaternion.Euler(new Vector3(0, transform.localRotation.eulerAngles.y,
-                            transform.localRotation.eulerAngles.z));
-                    }
-                }
-            }
-            
         }
 
         // If the player should jump...
@@ -243,24 +243,89 @@ public class CharacterController2D : MonoBehaviour
     }
 
 
+    public void SetWeapon(Weapon weapon)
+    {
+        _weapon = weapon;
+    }
+
+    public void Attack(Vector2 postion)
+    {
+        if (_attack)
+            return;
+
+        _attack = true;
+        OnAttack?.Invoke(_weapon.subWeaponType);
+
+        switch (_weapon.weaponType)
+        {
+            case WeaponType.Melee:
+
+                MeleeAttack();
+
+                break;
+            case WeaponType.Range:
+
+                RangeAttack(postion);
+
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void RangeAttack(Vector2 postion)
+    {
+        var projectile = Instantiate(_weapon.projectilePrefab, _porojectilePos.position, Quaternion.identity).GetComponent<Projectile>();
+        projectile.Setup(postion, _weapon, CharacterType.Boss, gameObject);
+    }
+
+    private void MeleeAttack()
+    {
+        var hits = Physics2D.OverlapCircleAll(_meleePosDetection.position, _weapon.rangeDetect);
+
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent<IDamageable>(out var enemy))
+            {
+                if (enemy.CharacterType == CharacterType.Boss)
+                {
+                    enemy.TakeDamage(_weapon.weaponDamage);
+                    OnMeleeAttackDone?.Invoke(_weapon.subWeaponType);
+                }
+            }
+        }
+    }
+
     private void Flip()
     {
-        // Switch the way the player is labelled as facing.
-        m_FacingRight = !m_FacingRight;
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var direction = mousePosition.x - transform.position.x;
 
         // Multiply the player's x local scale by -1.
 
-        if (transform.localRotation.eulerAngles.y == 0)
-        {
-            transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 180,
-                transform.localRotation.eulerAngles.z));
-        }
-        else
+        if (direction >= 0)
         {
             transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 0,
                 transform.localRotation.eulerAngles.z));
+            m_FacingRight = true;
+        }
+        else
+        {
+            transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 180,
+                transform.localRotation.eulerAngles.z));
+            m_FacingRight = false;
         }
 
-        // transform.Rotate(Vector3.up * 180);
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        //Melee Attack Detection
+        if (_weapon == null)
+            return;
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(_meleePosDetection.position, _weapon.rangeDetect);
     }
 }

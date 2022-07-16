@@ -5,6 +5,7 @@
         None = 0,
         Idle = 1,
         Walking = 2,
-        Die = 3,
+        Attacking = 3,
+        Die = 4,
     }
 }
