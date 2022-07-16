@@ -12,7 +12,6 @@ public class DashController : MonoBehaviour
     private PlayerMovement _playerMovement;
     private GravityController _gravityController;
     private ConstantForce2D _constantForce2D;
-    private Player _player;
 
 
     private BoxCollider2D _boxCollider2D;
@@ -45,8 +44,6 @@ public class DashController : MonoBehaviour
         _playerMovement = GetComponent<PlayerMovement>();
         _gravityController = GetComponent<GravityController>();
         _constantForce2D = GetComponent<ConstantForce2D>();
-        _player = GetComponent<Player>();
-
 
 
         _boxCollider2D = GetComponent<BoxCollider2D>();
@@ -81,8 +78,6 @@ public class DashController : MonoBehaviour
             _circleCollider2D.isTrigger = false;
 
             _constantForce2D.enabled = true;
-
-            _player.IsImmune = false;
         }
 
         Debug.DrawLine(_startedPosition, _targetPosition, Color.red);
@@ -99,9 +94,10 @@ public class DashController : MonoBehaviour
 
         _dashClicked = true;
 
-        // AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Dash);
-
-        _player.IsImmune = true;
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Dash);
+        }
 
         _onDash?.Invoke();
     }
@@ -151,4 +147,28 @@ public class DashController : MonoBehaviour
         return true;
     }
 
+    private bool CheckDirectionWall(DirectionType directionType, Vector3 targetPosition)
+    {
+        switch (directionType)
+        {
+            case DirectionType.Up:
+                if (targetPosition.y > _gravityController.gorundDictionary[directionType].position.y)
+                    return false;
+                break;
+            case DirectionType.Down:
+                if (targetPosition.y < _gravityController.gorundDictionary[directionType].position.y)
+                    return false;
+                break;
+            case DirectionType.Left:
+                if (targetPosition.x < _gravityController.gorundDictionary[directionType].position.x)
+                    return false;
+                break;
+            case DirectionType.Right:
+                if (targetPosition.x > _gravityController.gorundDictionary[directionType].position.x)
+                    return false;
+                break;
+        }
+
+        return true;
+    }
 }
