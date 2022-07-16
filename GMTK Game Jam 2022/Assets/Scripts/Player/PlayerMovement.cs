@@ -14,21 +14,19 @@ namespace DefaultNamespace
         public float VerticalMove => _verticalMove;
         public float HorizontalMove => _horizontalMove;
         public bool IsGrounded => controller.IsGrounded;
-        public bool IsAttackDone => controller.IsAttackDone;
 
 
         public CharacterController2D controller;
 
-        [SerializeField] private float runSpeed = 40f;
+        protected float defaultRunSpeed;
 
-        private float _verticalMove = 0f;
-        private float _horizontalMove = 0f;
+        [SerializeField] protected float runSpeed = 40f;
 
-        private bool _jump = false;
-        private bool _waitForJumpButtonUp;
-        private bool _attack = false;
-        private bool _canAttack;
-        private Vector2 _mousePosition;
+        protected float _verticalMove = 0f;
+        protected float _horizontalMove = 0f;
+
+        protected bool _jump = false;
+        protected bool _waitForJumpButtonUp;
 
         private ConstantForce2D _constantForce2D;
 
@@ -36,14 +34,15 @@ namespace DefaultNamespace
 
         private void Awake()
         {
+            defaultRunSpeed = runSpeed;
+            
             _constantForce2D = GetComponent<ConstantForce2D>();
-            _canAttack = true;
+
             controller.OnJumpAvailable += JumpAvailable;
             controller.OnLandEvent.AddListener(() =>
             {
                 OnLand?.Invoke();
             });
-
         }
 
         private void JumpAvailable()
@@ -54,31 +53,14 @@ namespace DefaultNamespace
             }
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             _verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
             _horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-
+            
+            
             // Debug.DrawLine(transform.position, transform.position + transform.right * 10, Color.yellow);
-
-            if (IsAttackDone)
-                _canAttack = true;
-
-            GetInputs();
-        }
-
-
-        private void GetInputs()
-        {
-            if (Input.GetMouseButton(0) && _canAttack)
-            {
-                controller.SetAttackTimer();
-                _attack = true;
-                _canAttack = false;
-                _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            }
-
+            
             if (Input.GetButton("Jump") && !_waitForJumpButtonUp)
             {
                 _jump = true;
@@ -105,6 +87,7 @@ namespace DefaultNamespace
             }
         }
 
+
         private void FixedUpdate()
         {
             if (_constantForce2D.force.y != 0f)
@@ -117,13 +100,6 @@ namespace DefaultNamespace
             }
 
             controller.Move(_verticalMove * Time.fixedDeltaTime, _horizontalMove * Time.fixedDeltaTime, false, _jump);
-
-            if (_attack)
-            {
-                controller.Attack(_mousePosition);
-                _attack = false;
-            }
-
         }
     }
 }
