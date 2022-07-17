@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Managers.Audio_Manager;
 using UnityEngine;
 using UnityEngine.Events;
 using WeaponSystem;
@@ -19,6 +20,7 @@ public abstract class Projectile : MonoBehaviour
     protected CharacterType _targetType;
     protected GameObject _launcher;
 
+    [SerializeField] private AudioSource _audioSource;
     public virtual void Setup(Vector3 target, Weapon weapon, CharacterType targetType, GameObject launcher)
     {
         _direction = (target - transform.position).normalized;
@@ -34,5 +36,14 @@ public abstract class Projectile : MonoBehaviour
     private void Update()
     {
         Execute();
+    }
+    
+    public void PlaySound(string str)
+    {
+        AudioManager.instance.PlaySoundEffect(_audioSource,Enum.Parse<AudioTypes>(str));
+    }
+    public void StopSound()
+    {
+        AudioManager.instance.StopSoundEffect(_audioSource);
     }
 }

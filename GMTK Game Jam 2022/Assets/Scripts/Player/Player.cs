@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Managers;
 using Managers.Audio_Manager;
@@ -89,6 +90,8 @@ namespace DefaultNamespace
 
 
         private bool _collisionTriggered;
+        [SerializeField] private GameObject jumpParticleSystem;
+
 
         private void Awake()
         {
@@ -109,23 +112,24 @@ namespace DefaultNamespace
             _playerMovement.OnJump += () =>
             {
                 OnPlayerJumped?.Invoke();
-               // AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Jump);
+                AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Jump);
+                StartCoroutine(ExecuteParticleSystem(jumpParticleSystem));
             };
             _playerMovement.OnLand += () =>
             {
                 OnPlayerLand?.Invoke();
-               // AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Land);
+                AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Land);
             };
 
             _onPlayerStateChanged.AddListener(state =>
             {
                 if (state == PlayerStateType.Walking)
                 {
-                   // AudioManager.instance.PlaySoundEffect(_walkAudioSource, AudioTypes.Walk);
+                   //AudioManager.instance.PlaySoundEffect(_walkAudioSource, AudioTypes.Walk);
                 }
                 else
                 {
-                   // AudioManager.instance.StopSoundEffect(_walkAudioSource);
+                   //.instance.StopSoundEffect(_walkAudioSource);
                 }
             });
         }
@@ -282,8 +286,25 @@ namespace DefaultNamespace
             _animator.SetLayerWeight(1, 1);
             OnTakeDamage?.Invoke();
         }
+
+        public void PlaySound(string str)
+        {
+            AudioManager.instance.PlaySoundEffect(_audioSource,Enum.Parse<AudioTypes>(str));
+        }
+        public void StopSound()
+        {
+            AudioManager.instance.StopSoundEffect(_audioSource);
+        }
+        
+        
+        public static IEnumerator ExecuteParticleSystem(GameObject obj)
+        {
+            obj.SetActive(true);
+            yield return new WaitForSeconds(0.3f);
+            obj.SetActive(false);
+        }
     }
-    
+
 
     [Serializable]
     public class PlayerStateEvent : UnityEvent<PlayerStateType>
