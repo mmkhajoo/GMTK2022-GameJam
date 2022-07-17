@@ -1113,6 +1113,8 @@ MonoBehaviour:
   - {fileID: 4687903120232266012}
   - {fileID: 4176799752192496691}
   - {fileID: 5243239608498827472}
+  _iconSpriteParent: {fileID: 796173296245248617}
+  _defaultBody: {fileID: 2618969121584106000}
   _diceAnimationGO: {fileID: 1788881117439275939}
   OnTakeDamage:
     m_PersistentCalls:
@@ -1934,6 +1936,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss Character
       objectReference: {fileID: 0}
+    - target: {fileID: 7179277968536246986, guid: 7a5f7b8b8b918e04ca7ecde858b42a24, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8201078230577422962, guid: 7a5f7b8b8b918e04ca7ecde858b42a24, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1990,11 +1996,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8585457783054181109, guid: 7a5f7b8b8b918e04ca7ecde858b42a24, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a5f7b8b8b918e04ca7ecde858b42a24, type: 3}
 --- !u!95 &1682610243985352789 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1082831307, guid: 7a5f7b8b8b918e04ca7ecde858b42a24, type: 3}
+  m_PrefabInstance: {fileID: 1682610245066856862}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2618969121584106000 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3675403008517624718, guid: 7a5f7b8b8b918e04ca7ecde858b42a24, type: 3}
   m_PrefabInstance: {fileID: 1682610245066856862}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7388647947956993004 stripped
