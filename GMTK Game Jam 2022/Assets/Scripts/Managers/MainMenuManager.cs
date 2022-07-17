@@ -7,7 +7,7 @@ namespace Managers
     {
         public void StartGame()
         {
-            GameManager.instance.LoadLevel();
+            SceneManager.LoadScene(1);
         }
 
         public void Exit()
