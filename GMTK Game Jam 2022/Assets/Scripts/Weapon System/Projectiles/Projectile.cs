@@ -9,11 +9,12 @@ public abstract class Projectile : MonoBehaviour
 {
     public UnityEvent OnDestroy;
 
-    [SerializeField]
-    private float _destroyTime;
+    [SerializeField] protected float _destroyTime;
+    protected bool _isStoped;
 
     protected int _damage;
     protected float _speed;
+    protected bool _canDamage;
     protected Vector3 _direction;
     protected CharacterType _targetType;
     protected GameObject _launcher;
@@ -24,8 +25,8 @@ public abstract class Projectile : MonoBehaviour
         _speed = weapon.projectileSpeed;
         _damage = weapon.weaponDamage;
         _launcher = launcher;
-
-        Destroy(gameObject, _destroyTime);
+        _canDamage = true;
+        _isStoped = false;
     }
 
     protected abstract void Execute();

@@ -16,8 +16,13 @@ namespace DefaultNamespace
 
         #region Fields
 
-        [SerializeField]
-        private int _health;
+        [SerializeField] private int _health;
+
+        [SerializeField] private GameObject _rollDiceGO;
+        [SerializeField] private GameObject _mainBody;
+        [SerializeField] private float _rollDiceTimer = 0.5f;
+        private float tempTimerDice;
+        private bool _isDiceRoll;
 
         private PlayerStateType _currentPlayerStateType = PlayerStateType.None;
 
@@ -37,7 +42,9 @@ namespace DefaultNamespace
         [SerializeField]
         private float immuneTime;
         private bool _isImmune;
-        private float tempTime;
+        private float tempTimer;
+
+        private int _lastWeapon;
 
         #endregion
 
@@ -48,7 +55,8 @@ namespace DefaultNamespace
         [SerializeField] private UnityEvent OnPlayerJumped;
         [SerializeField] private UnityEvent OnTakeDamage;
         [SerializeField] private UnityEvent OnEndImmunity;
-        [SerializeField] private UnityEvent OnDiceTimerDone;
+        [SerializeField] private UnityEvent OnDiceBegin;
+        [SerializeField] private UnityEvent OnDiceRolledDone;
 
 
         [Header("Audio Source")] [SerializeField]
@@ -95,8 +103,8 @@ namespace DefaultNamespace
             _circleCollider2D = GetComponent<CircleCollider2D>();
             _rigidbody2D = GetComponent<Rigidbody2D>();
 
-            var randomWeapon = UnityEngine.Random.Range(0, 4);
-            _characterController2D.SetWeapon(_weaponData.weapons[randomWeapon]);
+            _lastWeapon = UnityEngine.Random.Range(0, 4);
+            _characterController2D.SetWeapon(_weaponData.weapons[2]);
 
             _playerMovement.OnJump += () =>
             {
@@ -124,13 +132,6 @@ namespace DefaultNamespace
 
         private void Update()
         {
- #if UNITY_EDITOR
-            if (Input.GetMouseButton(1))
-            {
-                TakeDamage(50);
-            }
-#endif
-
             if (isPlayerMoving)
             {
                 SetPlayerState(PlayerStateType.Walking);
@@ -143,13 +144,36 @@ namespace DefaultNamespace
 
             if (IsImmune)
             {
-                tempTime += Time.deltaTime;
-                if(tempTime >= immuneTime)
+                tempTimer += Time.deltaTime;
+                if(tempTimer >= immuneTime)
                 {
-                    tempTime = 0;
+                    tempTimer = 0;
                     _isImmune = false;
                     _animator.SetLayerWeight(1, 0);
                     OnEndImmunity?.Invoke();
+                }
+            }
+
+            if (_isDiceRoll)
+            {
+                tempTimerDice += Time.deltaTime;
+                if (tempTimerDice >= _rollDiceTimer)
+                {
+                    tempTimerDice = 0;
+                    _isDiceRoll = false;
+
+                    _rollDiceGO.SetActive(false);
+                    _mainBody.SetActive(true);
+
+                    int weaponNumber = _lastWeapon;
+                    while (_lastWeapon == weaponNumber)
+                    {
+                        weaponNumber = UnityEngine.Random.Range(0, 4); 
+                    }
+                    _lastWeapon = weaponNumber;
+                    _characterController2D.SetWeapon(_weaponData.weapons[weaponNumber]);
+
+                    OnDiceRolledDone?.Invoke();
                 }
             }
 
@@ -164,10 +188,12 @@ namespace DefaultNamespace
            // _onPlayerStateChanged?.Invoke(_currentPlayerStateType);
         }
 
-        public void RollOftheDice(int weaponNumber)
+        public void RollOftheDice()
         {
-            OnDiceTimerDone?.Invoke();
-            _characterController2D.SetWeapon(_weaponData.weapons[weaponNumber]);
+            _rollDiceGO.SetActive(true);
+            _mainBody.SetActive(false);
+            _isDiceRoll = true;
+            OnDiceBegin?.Invoke();
         }
 
         public void Enable()

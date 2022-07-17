@@ -52,10 +52,14 @@ namespace Managers
                 if (tempTimer <= 0)
                 {
                     var rand = UnityEngine.Random.Range(0, 4);
-                    _player.RollOftheDice(rand);
-                    tempTimer = _playerDiceTimer;
+                    _player.RollOftheDice();
                 }
             }
+        }
+
+        public void OnRollDiceOfPlayerDone()
+        {
+            tempTimer = _playerDiceTimer;
         }
 
         public void OnHealthUpdate()

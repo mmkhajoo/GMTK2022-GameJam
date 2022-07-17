@@ -8,7 +8,8 @@ public class FireBall : Projectile
 {
     protected override void Execute()
     {
-        transform.position += _direction * _speed * Time.deltaTime;
+        if (!_isStoped)
+            transform.position += _direction * _speed * Time.deltaTime;
     }
 
     public override void Setup(Vector3 target, Weapon weapon, CharacterType targetType, GameObject launcher)
@@ -24,17 +25,22 @@ public class FireBall : Projectile
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_launcher == collision.gameObject)
+        if (_launcher == collision.gameObject || collision.gameObject == gameObject)
+            return;
+
+        if (collision.TryGetComponent<Projectile>(out var projectile))
             return;
 
         if (collision.TryGetComponent<IDamageable>(out var target))
         {
-            if (target.CharacterType == _targetType)
+            if (target.CharacterType == _targetType && _canDamage)
+            {
                 target.TakeDamage(_damage);
+                _canDamage = false;
+            }
         }
-
+        _isStoped = true;
+        Destroy(gameObject, _destroyTime);
         OnDestroy.Invoke();
-        gameObject.SetActive(false);
-
     }
 }

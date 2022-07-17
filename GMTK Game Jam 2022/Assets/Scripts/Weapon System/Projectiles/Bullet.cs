@@ -8,7 +8,8 @@ public class Bullet : Projectile
 {
     protected override void Execute()
     {
-        transform.position += _direction * _speed * Time.deltaTime;
+        if(!_isStoped)
+            transform.position += _direction * _speed * Time.deltaTime;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -16,15 +17,19 @@ public class Bullet : Projectile
         if (_launcher == collision.gameObject)
             return;
 
+        if (collision.TryGetComponent<Projectile>(out var projectile))
+            return;
+
         if (collision.TryGetComponent<IDamageable>(out var target))
         {
-            if (target.CharacterType == _targetType)
+            if (target.CharacterType == _targetType && _canDamage)
+            {
                 target.TakeDamage(_damage);
-
+                _canDamage = false;
+            }
         }
-
+        _isStoped = true;
+        Destroy(gameObject, _destroyTime);
         OnDestroy.Invoke();
-        gameObject.SetActive(false);
-
     }
 }

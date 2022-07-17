@@ -64,7 +64,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  _destroyTime: 1
+  _destroyTime: 0.7
 --- !u!50 &25176226822389211
 Rigidbody2D:
   serializedVersion: 4
