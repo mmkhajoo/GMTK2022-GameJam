@@ -23,7 +23,34 @@
         PaperImpact=18,
         SoulShardCollect=19,
         ButtonClicked=20,
-        Die=21
-        
+        Die=21,
+        AxeSlash=22,
+        BombExplosion=23,
+        BombThrow=24,
+        Charging=25,
+        FireballThrow=26,
+        LandingImpact=27,
+        LandingImpact2=28,
+        Lose=29,
+        RollingDice=30,
+        ShurikenImpact=31,
+        ShurikenThrow=32,
+        Slicing=33,
+        SwordSound=34,
+        Ticktack=35,
+        Win=36,
+        Fight=37,
+        GameOver=38,
+        KillHim=39,
+        Number1=40,
+        Number2=41,
+        Number3=42,
+        PrepareYourself=43,
+        Ready=44,
+        YouLose=45,
+        YouWin=46,
+        StreetLove=47,
+        StupidDancer=48
+      
     }
 }
