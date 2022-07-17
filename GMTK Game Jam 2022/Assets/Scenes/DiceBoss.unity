@@ -82736,17 +82736,13 @@ PrefabInstance:
       value: AudioManager
       objectReference: {fileID: 0}
     - target: {fileID: 7671649102537133710, guid: 35c2cd8ae4570584890b507d21781348, type: 3}
-      propertyPath: _audioClips.Array.data[1]
-      value: 
-      objectReference: {fileID: 8300000, guid: 0914ef63e287c72458e55b0ff38171ae, type: 3}
+      propertyPath: _audioClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7671649102537133710, guid: 35c2cd8ae4570584890b507d21781348, type: 3}
-      propertyPath: _audioClips.Array.data[2]
+      propertyPath: _audioClips.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 5ce596df8355f8147b50bddee5e3bbb1, type: 3}
-    - target: {fileID: 7671649102537133710, guid: 35c2cd8ae4570584890b507d21781348, type: 3}
-      propertyPath: _audioClips.Array.data[3]
-      value: 
-      objectReference: {fileID: 8300000, guid: c5d732e1aae5e424e94224ad74de8e0c, type: 3}
+      objectReference: {fileID: 8300000, guid: 871977de55a963a41956b72d317f0914, type: 3}
     - target: {fileID: 7671649102537133711, guid: 35c2cd8ae4570584890b507d21781348, type: 3}
       propertyPath: m_RootOrder
       value: 1
