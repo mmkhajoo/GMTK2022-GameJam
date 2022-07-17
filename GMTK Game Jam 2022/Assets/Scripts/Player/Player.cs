@@ -125,7 +125,7 @@ namespace DefaultNamespace
             _playerMovement.OnLand += () =>
             {
                 OnPlayerLand?.Invoke();
-                AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Land);
+                //AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Land);
             };
 
             _onPlayerStateChanged.AddListener(state =>
