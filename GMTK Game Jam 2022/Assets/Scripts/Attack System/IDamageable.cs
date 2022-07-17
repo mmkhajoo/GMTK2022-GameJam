@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    CharacterType CharacterType { get; }
+    string Type { get; }
 
     void TakeDamage(int hitDamage);
 }

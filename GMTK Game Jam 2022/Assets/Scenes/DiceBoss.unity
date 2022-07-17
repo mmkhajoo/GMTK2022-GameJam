@@ -82258,6 +82258,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 7678688206059300536, guid: 829e1437e0375ae4da0718141966f49f, type: 3}
+      propertyPath: _health
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 7678688206059300536, guid: 829e1437e0375ae4da0718141966f49f, type: 3}
       propertyPath: OnTakeDamage.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 151465378}
@@ -84285,7 +84289,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _audioSource: {fileID: 0}
-  _health: 100
+  _health: 500
 --- !u!114 &2028063757000578322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85805,10 +85809,10 @@ MonoBehaviour:
       variableStartIndex: 
       JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(216,10)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(40.44444,173.873871)"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.RandomDice","NodeData":{"Offset":"(-2.333374,163.333344)"},"ID":2,"Name":"Random
         Dice","Instant":true,"SharedInt_maxDice":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-366.9206,183.728058)"},"ID":3,"Name":"Charge","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.ChargeAction","NodeData":{"Offset":"(-473.1303,218.390152)"},"ID":4,"Name":"Charge
-        Action","Instant":true,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":0},"Single_chargeSpeed":10,"ActionTypes_actionTypes":"Charge","Single_pauseTime":2,"Int32_damage":0},{"Type":"BehaviorDesigner.Runtime.Tasks.MoveRandomInSky","NodeData":{"Offset":"(-313.130554,278.3901)"},"ID":5,"Name":"Move
+        Action","Instant":true,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":0},"Single_chargeSpeed":10,"ActionTypes_actionTypes":"Charge","Single_pauseTime":2,"Int32_damage":30},{"Type":"BehaviorDesigner.Runtime.Tasks.MoveRandomInSky","NodeData":{"Offset":"(-313.130554,278.3901)"},"ID":5,"Name":"Move
         Random In Sky","Instant":true,"SharedTransform_startTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"StartPosition","IsShared":true,"TransformmValue":1},"SharedTransform_endTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"EndPosition","IsShared":true,"TransformmValue":2},"Single_speed":10,"Single_offset":1,"ActionTypes_actionTypes":"None","Single_pauseTime":1,"Int32_damage":0},{"Type":"BehaviorDesigner.Runtime.Tasks.SetRandomDiceAction","NodeData":{"Offset":"(-113.130745,278.390137)"},"ID":6,"Name":"Set
         Random Dice Action","Instant":true,"SharedInt_maxDice":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"DiceNumber","IsShared":true,"Int32mValue":1},"SharedInt_currentChildIndex":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"CurrentDice","IsShared":true,"Int32mValue":-1},"List`1_actionTypesList":["Charge","Jump","FireBall","SmallFireBall"],"ActionTypes_actionTypes":"None","Single_pauseTime":0,"Int32_damage":0}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-159.698334,177.06134)"},"ID":7,"Name":"Jump","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.LandAction","NodeData":{"Offset":"(-234.782959,456.998566)"},"ID":8,"Name":"Land
-        Action","Instant":true,"Single_landingDistance":8,"Single_landingSpeed":12,"Single_landingDelay":0.5,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":3},"ActionTypes_actionTypes":"Jump","Single_pauseTime":2,"Int32_damage":0},{"Type":"BehaviorDesigner.Runtime.Tasks.MoveRandomInSky","NodeData":{"Offset":"(-72.6070557,455.9128)"},"ID":9,"Name":"Move
+        Action","Instant":true,"Single_landingDistance":8,"Single_landingSpeed":12,"Single_landingDelay":0.5,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":3},"ActionTypes_actionTypes":"Jump","Single_pauseTime":2,"Int32_damage":50},{"Type":"BehaviorDesigner.Runtime.Tasks.MoveRandomInSky","NodeData":{"Offset":"(-72.6070557,455.9128)"},"ID":9,"Name":"Move
         Random In Sky","Instant":true,"SharedTransform_startTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"StartPosition","IsShared":true,"TransformmValue":4},"SharedTransform_endTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"EndPosition","IsShared":true,"TransformmValue":5},"Single_speed":10,"Single_offset":1,"ActionTypes_actionTypes":"None","Single_pauseTime":1,"Int32_damage":0},{"Type":"BehaviorDesigner.Runtime.Tasks.SetRandomDiceAction","NodeData":{"Offset":"(105.653458,455.9128)"},"ID":10,"Name":"Set
         Random Dice Action","Instant":true,"SharedInt_maxDice":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"DiceNumber","IsShared":true,"Int32mValue":1},"SharedInt_currentChildIndex":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"CurrentDice","IsShared":true,"Int32mValue":-1},"List`1_actionTypesList":["Charge","Jump","FireBall","SmallFireBall"],"ActionTypes_actionTypes":"None","Single_pauseTime":0,"Int32_damage":0}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(56.9682922,177.0614)"},"ID":11,"Name":"Fire
         Ball","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.CastFireBallAction","NodeData":{"Offset":"(-107.385635,255.1731)"},"ID":12,"Name":"Cast

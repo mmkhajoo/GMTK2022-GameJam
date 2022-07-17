@@ -72,7 +72,7 @@ namespace BehaviorDesigner.Runtime.Tasks
 
                 if (collision.gameObject.TryGetComponent<IDamageable>(out var target))
                 {
-                    if (target.CharacterType == CharacterType.Player)
+                    if (target.Type == "player")
                         target.TakeDamage(_damage);
                 }
 

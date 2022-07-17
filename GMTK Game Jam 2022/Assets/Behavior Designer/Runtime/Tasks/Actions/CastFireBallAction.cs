@@ -46,7 +46,7 @@ namespace BehaviorDesigner.Runtime.Tasks
 
             var fireBall = GameObject.Instantiate(_fireBallGO, _projectileInitPos.position, Quaternion.identity).GetComponent<FireBall>();
 
-            fireBall.Setup(_targetPosition, _weapon, CharacterType.Player, gameObject);
+            fireBall.Setup(_targetPosition, _weapon, "player", gameObject);
 
             _enemyEvents.OnEndCasting();
 

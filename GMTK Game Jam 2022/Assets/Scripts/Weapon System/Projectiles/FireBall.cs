@@ -12,7 +12,7 @@ public class FireBall : Projectile
             transform.position += _direction * _speed * Time.deltaTime;
     }
 
-    public override void Setup(Vector3 target, Weapon weapon, CharacterType targetType, GameObject launcher)
+    public override void Setup(Vector3 target, Weapon weapon, string targetType, GameObject launcher)
     {
         base.Setup(target, weapon, targetType, launcher);
 
@@ -30,15 +30,20 @@ public class FireBall : Projectile
 
         if (collision.TryGetComponent<Projectile>(out var projectile))
             return;
+        var hits = Physics2D.OverlapCircleAll(transform.position, 1);
 
-        if (collision.TryGetComponent<IDamageable>(out var target))
+        foreach (var hit in hits)
         {
-            if (target.CharacterType == _targetType && _canDamage)
+            if (hit.TryGetComponent<IDamageable>(out var enemy))
             {
-                target.TakeDamage(_damage);
-                _canDamage = false;
+                if (enemy.Type == _targetType && _canDamage)
+                {
+                    enemy.TakeDamage(_damage);
+                    _canDamage = false;
+                }
             }
         }
+
         _isStoped = true;
         Destroy(gameObject, _destroyTime);
         OnDestroy.Invoke();

@@ -75,7 +75,7 @@ namespace DefaultNamespace
 
         private bool isPlayerMoving => _playerMovement.VerticalMove != 0f || _playerMovement.HorizontalMove != 0f;
 
-        public CharacterType CharacterType => CharacterType.Player;
+        public string Type => "player";
 
         public bool IsImmune
         {

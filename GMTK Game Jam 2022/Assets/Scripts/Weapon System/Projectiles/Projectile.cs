@@ -17,11 +17,11 @@ public abstract class Projectile : MonoBehaviour
     protected float _speed;
     protected bool _canDamage;
     protected Vector3 _direction;
-    protected CharacterType _targetType;
+    protected string _targetType;
     protected GameObject _launcher;
 
     [SerializeField] private AudioSource _audioSource;
-    public virtual void Setup(Vector3 target, Weapon weapon, CharacterType targetType, GameObject launcher)
+    public virtual void Setup(Vector3 target, Weapon weapon, string targetType, GameObject launcher)
     {
         _direction = (target - transform.position).normalized;
         _speed = weapon.projectileSpeed;

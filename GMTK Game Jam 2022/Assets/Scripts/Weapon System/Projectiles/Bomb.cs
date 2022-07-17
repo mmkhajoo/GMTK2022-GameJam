@@ -8,7 +8,7 @@ public class Bomb : Projectile
     private float _explosionRadius;
     private Rigidbody2D _rigidbody2D;
 
-    public override void Setup(Vector3 target, Weapon weapon, CharacterType targetType, GameObject launcher)
+    public override void Setup(Vector3 target, Weapon weapon, string targetType, GameObject launcher)
     {
         base.Setup(target, weapon, targetType, launcher);
 
@@ -32,7 +32,7 @@ public class Bomb : Projectile
         {
             if(hit.TryGetComponent<IDamageable>(out var target))
             {
-                if (target.CharacterType == _targetType && _canDamage)
+                if (target.Type == _targetType && _canDamage)
                 {
                     target.TakeDamage(_damage);
                     _canDamage = false;

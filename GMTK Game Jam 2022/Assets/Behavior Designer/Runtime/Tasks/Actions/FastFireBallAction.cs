@@ -43,7 +43,7 @@ namespace BehaviorDesigner.Runtime.Tasks
             for (int i = 0; i < _fireBallNumber; i++)
             {
                 var f1 = GameObject.Instantiate(_fireBallGO, _projectileInitPos.position, Quaternion.identity).GetComponent<FireBall>();
-                f1.Setup(_targetPosition, _weapon, CharacterType.Player, gameObject);
+                f1.Setup(_targetPosition, _weapon, "player", gameObject);
                 _enemyEvents.OnFireProjectile();
 
                 yield return new WaitForSeconds(_weapon.fireRate);

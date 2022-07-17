@@ -22,12 +22,17 @@ public class Bullet : Projectile
         if (collision.TryGetComponent<Projectile>(out var projectile))
             return;
 
-        if (collision.TryGetComponent<IDamageable>(out var target))
+        var hits = Physics2D.OverlapCircleAll(transform.position, 1);
+
+        foreach (var hit in hits)
         {
-            if (target.CharacterType == _targetType && _canDamage)
+            if (hit.TryGetComponent<IDamageable>(out var enemy))
             {
-                target.TakeDamage(_damage);
-                _canDamage = false;
+                if (enemy.Type == _targetType && _canDamage)
+                {
+                    enemy.TakeDamage(_damage);
+                    _canDamage = false;
+                }
             }
         }
         _isStoped = true;

@@ -329,7 +329,7 @@ public class CharacterController2D : MonoBehaviour
     private void RangeAttack(Vector2 postion)
     {
         var projectile = Instantiate(_weapon.projectilePrefab, _porojectilePos.position, Quaternion.identity).GetComponent<Projectile>();
-        projectile.Setup(postion, _weapon, CharacterType.Boss, gameObject);
+        projectile.Setup(postion, _weapon, "boss", gameObject);
     }
 
     private void MeleeAttack()
@@ -340,7 +340,7 @@ public class CharacterController2D : MonoBehaviour
         {
             if (hit.TryGetComponent<IDamageable>(out var enemy))
             {
-                if (enemy.CharacterType == CharacterType.Boss)
+                if (enemy.Type == "boss")
                 {
                     enemy.TakeDamage(_weapon.weaponDamage);
                     OnMeleeAttackDone?.Invoke(_weapon.subWeaponType);

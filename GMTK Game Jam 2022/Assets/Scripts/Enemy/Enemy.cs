@@ -32,7 +32,7 @@ namespace Enemy
 
         private float _healthDivided;
 
-        public CharacterType CharacterType => CharacterType.Boss;
+        public string Type => "boss";
 
         private const string DiceValueName = "DiceNumber";
 
