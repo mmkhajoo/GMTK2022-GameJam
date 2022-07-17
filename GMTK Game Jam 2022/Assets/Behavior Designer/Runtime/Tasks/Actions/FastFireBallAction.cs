@@ -36,7 +36,6 @@ namespace BehaviorDesigner.Runtime.Tasks
 
             StartCoroutine(ShootFireBall());
 
-            _enemyEvents.OnStartCasting();
         }
 
         private IEnumerator ShootFireBall()
@@ -50,6 +49,7 @@ namespace BehaviorDesigner.Runtime.Tasks
                 yield return new WaitForSeconds(_weapon.fireRate);
             }
 
+            _enemyEvents.OnFireProjectileEnded();
             _fireBallEnded = true;
         }
 

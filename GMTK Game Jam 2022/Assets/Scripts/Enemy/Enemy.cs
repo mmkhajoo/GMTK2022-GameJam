@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BehaviorDesigner.Runtime;
 using Managers;
 using Managers.Audio_Manager;
@@ -10,8 +11,12 @@ namespace Enemy
     public class Enemy : MonoBehaviour , IDamageable
     {
         private BehaviorTree _behaviorTree;
-        
+        [SerializeField] List<GameObject> _actionIcons;
+        [SerializeField] GameObject _diceAnimationGO;
+
+
         [SerializeField] private UnityEvent OnTakeDamage;
+
 
         [Header("Audio Source")] [SerializeField]
         private AudioSource _audioSource;

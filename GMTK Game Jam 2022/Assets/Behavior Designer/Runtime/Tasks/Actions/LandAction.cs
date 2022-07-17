@@ -33,7 +33,7 @@ namespace BehaviorDesigner.Runtime.Tasks
             gameObject.transform.position =
                 new Vector3(_targetTransform.Value.position.x, gameObject.transform.position.y);
 
-            _enemyEvents.OnStartLanding();
+            _enemyEvents.OnDelayLanding();
 
             LeanTween.delayedCall(gameObject, _landingDelay, PlayerLanding);
         }
@@ -42,6 +42,8 @@ namespace BehaviorDesigner.Runtime.Tasks
         {
             var moveY = LeanTween.moveY(gameObject, -5, _landingDistance / _landingSpeed);
             moveY.setOnComplete(OnEnemyLandOnPlayer);
+
+            _enemyEvents.OnStartLanding();
         }
 
         private void OnEnemyLandOnPlayer()
@@ -67,9 +69,13 @@ namespace BehaviorDesigner.Runtime.Tasks
                     if(collision.collider.gameObject.transform.parent.name == "DownGround" || collision.collider.gameObject.transform.parent.name == "UpGround")
                         return;
                 }
-                
-                //TODO : Add Damage Here;
-                
+
+                if (collision.gameObject.TryGetComponent<IDamageable>(out var target))
+                {
+                    if (target.CharacterType == CharacterType.Player)
+                        target.TakeDamage(_damage);
+                }
+
                 _enemyEvents.OnChargeEnd();
             }
         }

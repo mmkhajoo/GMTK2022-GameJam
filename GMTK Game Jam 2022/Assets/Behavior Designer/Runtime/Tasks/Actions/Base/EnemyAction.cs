@@ -26,11 +26,12 @@ namespace BehaviorDesigner.Runtime.Tasks
             _startTime = Time.time;
 
             _enemyEvents = GetComponent<EnemyEvents>();
+
+            OnPauseTimeStart();
         }
 
         public override TaskStatus OnUpdate()
         {
-            OnPauseTimeStart();
             var passesTime = Time.time - _startTime;
 
             if (passesTime < _pauseTime)
