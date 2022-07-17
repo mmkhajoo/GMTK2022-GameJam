@@ -6,6 +6,10 @@ namespace BehaviorDesigner.Runtime.Tasks
 {
     public abstract class EnemyAction : Action
     {
+        public ActionTypes ActionTypes => _actionTypes;
+
+        [SerializeField] private ActionTypes _actionTypes;
+        
         [SerializeField] private float _pauseTime;
 
         [SerializeField] protected int _damage;
