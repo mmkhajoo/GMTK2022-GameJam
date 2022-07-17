@@ -248,6 +248,8 @@ public class CharacterController2D : MonoBehaviour
     public void SetWeapon(Weapon weapon)
     {
         _weapon = weapon;
+        Debug.Log($"Weapon Initialized {_weapon.subWeaponType}");
+
         foreach (var sprite in _weaponSprites)
         {
             sprite.SetActive(false);
@@ -264,7 +266,6 @@ public class CharacterController2D : MonoBehaviour
 
         _attack = true;
         OnAttack?.Invoke(_weapon.subWeaponType);
-
         switch (_weapon.weaponType)
         {
             case WeaponType.Melee:
@@ -327,14 +328,5 @@ public class CharacterController2D : MonoBehaviour
         }
 
 
-    }
-
-    private void OnDrawGizmos()
-    {
-        //Melee Attack Detection
-        if (_weapon == null)
-            return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(_meleePosDetection.position, _weapon.rangeDetect);
     }
 }
