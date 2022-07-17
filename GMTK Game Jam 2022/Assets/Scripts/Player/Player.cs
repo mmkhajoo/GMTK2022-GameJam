@@ -119,7 +119,7 @@ namespace DefaultNamespace
             _playerMovement.OnJump += () =>
             {
                 OnPlayerJumped?.Invoke();
-                AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Jump);
+                //AudioManager.instance.PlaySoundEffect(_audioSource, AudioTypes.Jump);
                 StartCoroutine(ExecuteParticleSystem(jumpParticleSystem));
             };
             _playerMovement.OnLand += () =>
