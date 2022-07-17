@@ -17,6 +17,7 @@ public class DashController : MonoBehaviour
     private BoxCollider2D _boxCollider2D;
     private CircleCollider2D _circleCollider2D;
     private Rigidbody2D _rigidbody2D;
+    private Player _player;
 
     [SerializeField] private float _dashDistance;
     [SerializeField] private float _dashTime;
@@ -45,6 +46,7 @@ public class DashController : MonoBehaviour
         _playerMovement = GetComponent<PlayerMovement>();
         _gravityController = GetComponent<GravityController>();
         _constantForce2D = GetComponent<ConstantForce2D>();
+        _player = GetComponent<Player>();
 
 
         _boxCollider2D = GetComponent<BoxCollider2D>();
@@ -62,6 +64,9 @@ public class DashController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!_player.IsInitialized)
+            return;   
+
         if (Input.GetButtonDown("Debug Multiplier") && !_dashClicked)
         {
             if (CanDash())

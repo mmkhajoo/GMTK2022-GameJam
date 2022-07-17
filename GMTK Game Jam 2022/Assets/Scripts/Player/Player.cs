@@ -22,8 +22,11 @@ namespace DefaultNamespace
         [SerializeField] private GameObject _rollDiceGO;
         [SerializeField] private GameObject _mainBody;
         [SerializeField] private float _rollDiceTimer = 0.5f;
+
         private float tempTimerDice;
         private bool _isDiceRoll;
+        private bool _isInitialize;
+
 
         private PlayerStateType _currentPlayerStateType = PlayerStateType.None;
 
@@ -92,9 +95,13 @@ namespace DefaultNamespace
         private bool _collisionTriggered;
         [SerializeField] private GameObject jumpParticleSystem;
 
+        public bool IsInitialized => _isInitialize;
+
 
         private void Awake()
         {
+            _isInitialize = false;
+
             var weaponManager = Resources.Load("WeaponManager") as WeaponManager;
             _weaponData = weaponManager.Get(CharacterType.Player);
 
@@ -107,7 +114,7 @@ namespace DefaultNamespace
             _rigidbody2D = GetComponent<Rigidbody2D>();
 
             _lastWeapon = UnityEngine.Random.Range(0, 4);
-            _characterController2D.SetWeapon(_weaponData.weapons[2]);
+            _characterController2D.SetWeapon(_weaponData.weapons[_lastWeapon]);
 
             _playerMovement.OnJump += () =>
             {
@@ -132,6 +139,11 @@ namespace DefaultNamespace
                    //.instance.StopSoundEffect(_walkAudioSource);
                 }
             });
+        }
+
+        public void Initialize()
+        {
+            _isInitialize = true;
         }
 
         private void Update()

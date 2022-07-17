@@ -45,6 +45,9 @@ namespace Managers
 
         private void Update()
         {
+            if (!_player.IsInitialized)
+                return;
+
             if(tempTimer > 0)
             {
                 tempTimer -= Time.deltaTime;
@@ -55,6 +58,11 @@ namespace Managers
                     _player.RollOftheDice();
                 }
             }
+        }
+
+        public void StartGame()
+        {
+            _player.Initialize();
         }
 
         public void OnRollDiceOfPlayerDone()

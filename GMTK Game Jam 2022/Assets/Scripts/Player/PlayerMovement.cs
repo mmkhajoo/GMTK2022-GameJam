@@ -34,6 +34,7 @@ namespace DefaultNamespace
         protected bool _waitForJumpButtonUp;
 
         private ConstantForce2D _constantForce2D;
+        private Player _player;
 
         //TODO : Add Events for Play Idle and Move Animation on Player
 
@@ -42,6 +43,8 @@ namespace DefaultNamespace
             defaultRunSpeed = runSpeed;
 
             _constantForce2D = GetComponent<ConstantForce2D>();
+            _player = GetComponent<Player>();
+
             _canAttack = true;
 
             controller.OnJumpAvailable += JumpAvailable;
@@ -61,6 +64,9 @@ namespace DefaultNamespace
 
         protected virtual void Update()
         {
+            if (!_player.IsInitialized)
+                return;
+
             _verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
             _horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
 
