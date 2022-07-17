@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using BehaviorDesigner.Runtime;
 using DefaultNamespace;
 using Managers.Audio_Manager;
 using TMPro;
@@ -23,7 +25,7 @@ namespace Managers
         [SerializeField] private float _playerDiceTimer;
         private float tempTimer;
 
-
+        [SerializeField] private BehaviorTree _behaviorTree;
 
         private void Awake()
         {
@@ -33,7 +35,7 @@ namespace Managers
             DontDestroyOnLoad(gameObject);
 
 
-          //  LoadMainMenu();
+            //  LoadMainMenu();
         }
 
         private void Start()
@@ -43,12 +45,18 @@ namespace Managers
             _playerhealthSlider.value = _player.Health;
         }
 
+        public void StartGame()
+        {
+            _player.Initialize();
+            _behaviorTree.enabled = true;
+        }
+
         private void Update()
         {
-            if (!_player.IsInitialized)
+            if(!_player.IsInitialized)
                 return;
 
-            if(tempTimer > 0)
+            if (tempTimer > 0)
             {
                 tempTimer -= Time.deltaTime;
                 _timerText.text = (int)tempTimer + " s";
@@ -58,11 +66,6 @@ namespace Managers
                     _player.RollOftheDice();
                 }
             }
-        }
-
-        public void StartGame()
-        {
-            _player.Initialize();
         }
 
         public void OnRollDiceOfPlayerDone()
@@ -107,6 +110,5 @@ namespace Managers
         {
             SceneManager.LoadScene(1);
         }
-
     }
 }
