@@ -1,5 +1,4 @@
-﻿using Enemy;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace BehaviorDesigner.Runtime.Tasks
 {
@@ -7,24 +6,11 @@ namespace BehaviorDesigner.Runtime.Tasks
     {
         public SharedTransform _targetTransform;
         
-        private EnemyMovement _enemyMovement;
-        
         [SerializeField] private float _chargeSpeed;
 
-        private Vector3 _direction;
-
         private Vector3 _targetPosition;
-
-        private bool _isRight;
-
-        private bool _collided;
         
-        public override void OnAwake()
-        {
-            base.OnAwake();
-            
-            _enemyMovement = GetComponent<EnemyMovement>();
-        }
+        private bool _collided;
 
         public override void OnStart()
         {
@@ -33,23 +19,20 @@ namespace BehaviorDesigner.Runtime.Tasks
             _collided = false;
             
             _targetPosition = _targetTransform.Value.position;
-
-            _direction = (_targetPosition - transform.position).normalized;
-
-            if (_direction.x > 0)
-            {
-                _isRight = true;
-            }
-            else
-            {
-                _isRight = false;
-            }
-
-            _enemyMovement.SetSpeed(_chargeSpeed);
             
-            _enemyMovement.SetHorizontalValue(_isRight);
-            
+            var distance = Mathf.Sqrt(Mathf.Pow(_targetPosition.x - transform.position.x,2) +
+                                      Mathf.Pow(_targetPosition.y - transform.position.y,2));
+
+            var move = LeanTween.move(gameObject, _targetPosition, distance/_chargeSpeed);
+            move.setOnComplete(OnComplete);
+
             _enemyEvents.OnChargeStart();
+        }
+
+        private void OnComplete()
+        {
+            _collided = true;
+            _enemyEvents.OnChargeEnd();
         }
 
 
@@ -87,8 +70,6 @@ namespace BehaviorDesigner.Runtime.Tasks
                 }
 
                 _collided = true;
-                _enemyMovement.ResetSpeed();
-                _enemyMovement.StopMovement();
                 
                 _enemyEvents.OnChargeEnd();
             }
