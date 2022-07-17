@@ -111,6 +111,9 @@ namespace DefaultNamespace
 
         private void FixedUpdate()
         {
+            if(_constantForce2D == null)
+                return;
+
             if (_constantForce2D.force.y != 0f)
             {
                 _verticalMove = 0;

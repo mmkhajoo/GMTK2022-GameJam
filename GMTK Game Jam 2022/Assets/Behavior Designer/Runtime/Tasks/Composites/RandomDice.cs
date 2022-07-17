@@ -1,4 +1,8 @@
-﻿namespace BehaviorDesigner.Runtime.Tasks
+﻿
+using System;
+using System.Collections.Generic;
+
+namespace BehaviorDesigner.Runtime.Tasks
 {
     public class RandomDice : Composite
     {
@@ -14,6 +18,8 @@
         public override void OnAwake()
         {
             _random = new System.Random();
+
+            children.Shuffle();
         }
         
         public override void OnStart()
@@ -48,6 +54,22 @@
         {
             var dice = _random.Next(0, _maxDice.Value);
             _currentChildIndex = dice;
+        }
+    }
+
+    public static class Extentions
+    {
+        private static Random rng = new Random();
+        public static void Shuffle<T>(this IList<T> list)  
+        {
+            int n = list.Count;  
+            while (n > 1) {  
+                n--;  
+                int k = rng.Next(n + 1);  
+                T value = list[k];  
+                list[k] = list[n];  
+                list[n] = value;  
+            }  
         }
     }
 }

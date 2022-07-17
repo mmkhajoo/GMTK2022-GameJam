@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Managers;
 using Managers.Audio_Manager;
-using Objects;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using WeaponSystem;
