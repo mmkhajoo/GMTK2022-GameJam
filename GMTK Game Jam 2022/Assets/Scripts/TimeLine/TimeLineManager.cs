@@ -17,4 +17,9 @@ public class TimeLineManager : MonoBehaviour
         _isDirectorPlayed = true;
         director.Play();
     }
+
+    public void Test()
+    {
+        Debug.Log("test");
+    }
 }

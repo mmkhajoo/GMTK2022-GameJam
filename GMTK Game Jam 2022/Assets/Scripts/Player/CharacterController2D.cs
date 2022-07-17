@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
+using Managers.Audio_Manager;
 using UnityEngine;
 using UnityEngine.Events;
 using WeaponSystem;
@@ -71,6 +74,10 @@ public class CharacterController2D : MonoBehaviour
 
     private bool _isJumpCalled;
 
+    [SerializeField] private GameObject meleeWeaponParticleSystem;
+    
+    [SerializeField] private AudioSource weaponAudioSource;
+    [SerializeField] private AudioSource playerAudioSource;
     private void Awake()
     {
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
@@ -81,6 +88,8 @@ public class CharacterController2D : MonoBehaviour
 
         if (OnCrouchEvent == null)
             OnCrouchEvent = new BoolEvent();
+
+        OnAttack += OnPlayerAttack;
     }
 
     private void Update()
@@ -362,4 +371,33 @@ public class CharacterController2D : MonoBehaviour
 
 
     }
+
+    public void OnPlayerAttack(SubWeaponType weaponType)
+    {
+        switch (weaponType)
+        {
+            case SubWeaponType.Sword:
+                AudioManager.instance.PlaySoundEffect(weaponAudioSource,AudioTypes.Slicing);
+                StartCoroutine(Player.ExecuteParticleSystem(meleeWeaponParticleSystem));
+                break;
+            case SubWeaponType.Axe:
+                AudioManager.instance.PlaySoundEffect(weaponAudioSource,AudioTypes.AxeSlash);
+                StartCoroutine(Player.ExecuteParticleSystem(meleeWeaponParticleSystem));
+                break;
+            case SubWeaponType.Bomb:
+                AudioManager.instance.PlaySoundEffect(weaponAudioSource,AudioTypes.BombThrow);
+                break;
+            case SubWeaponType.Bullet:
+                AudioManager.instance.PlaySoundEffect(weaponAudioSource,AudioTypes.ShurikenThrow);
+                break;
+            case SubWeaponType.CastFireBall:
+                break;
+            case SubWeaponType.FastFireBall:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(weaponType), weaponType, null);
+        }
+    }
+
+   
 }

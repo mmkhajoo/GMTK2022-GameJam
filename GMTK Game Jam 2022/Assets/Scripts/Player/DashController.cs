@@ -38,7 +38,8 @@ public class DashController : MonoBehaviour
     [Header("Audio Source")] [SerializeField]
     private AudioSource _audioSource;
 
-
+    [SerializeField] private GameObject dashParticleSystem;
+    
     private void Awake()
     {
         _playerMovement = GetComponent<PlayerMovement>();
@@ -51,6 +52,11 @@ public class DashController : MonoBehaviour
         _rigidbody2D = GetComponent<Rigidbody2D>();
         
         _directionTypes = Enum.GetValues(typeof(DirectionType)).Cast<DirectionType>();
+        
+        _onDash.AddListener((() =>
+        {
+            StartCoroutine(Player.ExecuteParticleSystem(dashParticleSystem));
+        }));
     }
 
     // Update is called once per frame

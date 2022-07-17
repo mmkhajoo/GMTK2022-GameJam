@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Managers.Audio_Manager;
 using UnityEngine;
 using WeaponSystem;
 
 public class Bullet : Projectile
 {
+    
     protected override void Execute()
     {
         if(!_isStoped)
@@ -32,4 +34,5 @@ public class Bullet : Projectile
         Destroy(gameObject, _destroyTime);
         OnDestroy.Invoke();
     }
+    
 }
