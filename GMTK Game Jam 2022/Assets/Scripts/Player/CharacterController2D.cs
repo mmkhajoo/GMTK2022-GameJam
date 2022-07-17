@@ -13,6 +13,8 @@ public class CharacterController2D : MonoBehaviour
     public event Action<SubWeaponType> OnAttack;
     public event Action<SubWeaponType> OnMeleeAttackDone;
 
+    [SerializeField] private Animator _animator;
+
     [SerializeField] private float m_JumpForce = 400f; // Amount of force added when the player jumps.
 
     [SerializeField] private float jump_maxTime = 1f;
@@ -35,7 +37,7 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private Transform _porojectilePos;
     [SerializeField] private Transform _meleePosDetection;
 
-    const float k_GroundedRadius = .01f; // Radius of the overlap circle to determine if grounded
+    const float k_GroundedRadius = .5f; // Radius of the overlap circle to determine if grounded
     private bool m_Grounded; // Whether or not the player is grounded.
     const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
     private Rigidbody2D m_Rigidbody2D;
@@ -44,6 +46,7 @@ public class CharacterController2D : MonoBehaviour
     private Vector3 m_Velocity = Vector3.zero;
 
     [SerializeField] private List<GameObject> _weaponSprites;
+    [SerializeField] private List<GameObject> _weaponIcons;
     private Weapon _weapon;
     private bool _attack;
     private bool _attackTimeActive;
@@ -62,6 +65,9 @@ public class CharacterController2D : MonoBehaviour
     public BoolEvent OnCrouchEvent;
     private bool m_wasCrouching = false;
 
+    private Vector3 _direction;
+
+    public Vector3 Direction => _direction;
 
     private bool _isJumpCalled;
 
@@ -116,9 +122,61 @@ public class CharacterController2D : MonoBehaviour
 
     }
 
-    public void SetAttackTimer()
+    public void CheckRotation(float horizontalMove)
+    {
+        // If the input is moving the player right and the player is facing left...
+        if (horizontalMove != 0f)
+        {
+            if (horizontalMove > 0)
+            {
+                if (m_FacingRight)
+                {
+                    _direction = transform.right.normalized;
+
+                }
+                else
+                {
+                    _direction = -transform.right.normalized;
+                }
+            }
+            else
+            {
+                if (!m_FacingRight)
+                {
+                    _direction = transform.right.normalized;
+                }
+                else
+                {
+                    _direction = -transform.right.normalized;
+                }
+            }
+        }
+
+        horizontalMove = Mathf.Abs(horizontalMove);
+        _animator.SetFloat("foreward", horizontalMove);
+
+        CheckFlip();
+    }
+
+    public void SetAttackState()
     {
         _attackTimeActive = true;
+
+        switch (_weapon.weaponType)
+        {
+            case WeaponType.Melee:
+
+                _animator.SetTrigger("melee");
+
+                break;
+            case WeaponType.Range:
+
+                _animator.SetTrigger("range");
+
+                break;
+            default:
+                break;
+        }
     }
 
     public void Move(float verticalMove, float horizontalMove, bool crouch, bool jump)
@@ -182,36 +240,6 @@ public class CharacterController2D : MonoBehaviour
             m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity,
                 m_MovementSmoothing);
 
-
-            // If the input is moving the player right and the player is facing left...
-            if (horizontalMove != 0f)
-            {
-                if (horizontalMove > 0)
-                {
-                    if (m_FacingRight)
-                    {
-                        //TODO : Forward animation
-                    }
-                    else
-                    {
-                        //TODO :BackWard animation
-                    }
-                }
-                else
-                {
-                    if (!m_FacingRight)
-                    {
-                        //TODO : Forward animation
-                    }
-                    else
-                    {
-                        //TODO :BackWard animation
-                    }
-                }
-            }
-
-            Flip();
-
         }
 
         // If the player should jump...
@@ -251,11 +279,14 @@ public class CharacterController2D : MonoBehaviour
         Debug.Log($"Weapon Initialized {_weapon.subWeaponType}");
 
         foreach (var sprite in _weaponSprites)
-        {
             sprite.SetActive(false);
-        }
+
+        foreach (var icon in _weaponIcons)
+            icon.SetActive(false);
+
         int number = (int)weapon.subWeaponType;
         _weaponSprites[number].SetActive(true);
+        _weaponIcons[number].SetActive(true);
 
     }
 
@@ -270,11 +301,13 @@ public class CharacterController2D : MonoBehaviour
         {
             case WeaponType.Melee:
 
+                _animator.SetTrigger("melee");
                 MeleeAttack();
 
                 break;
             case WeaponType.Range:
 
+                _animator.SetTrigger("range");
                 RangeAttack(postion);
 
                 break;
@@ -307,7 +340,7 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
-    private void Flip()
+    private void CheckFlip()
     {
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         var direction = mousePosition.x - transform.position.x;

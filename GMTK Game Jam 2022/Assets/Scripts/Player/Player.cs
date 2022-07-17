@@ -12,10 +12,7 @@ namespace DefaultNamespace
     {
         public Transform Transform => transform;
 
-        [Header("Transition Configs")] [SerializeField]
-        private float _searchObjectRadius = 1f;
-
-        [SerializeField] private float _transitionTime = 0.5f;
+        [SerializeField] private Animator _animator;
 
         #region Fields
 
@@ -127,10 +124,13 @@ namespace DefaultNamespace
 
         private void Update()
         {
+ #if UNITY_EDITOR
             if (Input.GetMouseButton(1))
             {
                 TakeDamage(50);
             }
+#endif
+
             if (isPlayerMoving)
             {
                 SetPlayerState(PlayerStateType.Walking);
@@ -148,6 +148,7 @@ namespace DefaultNamespace
                 {
                     tempTime = 0;
                     _isImmune = false;
+                    _animator.SetLayerWeight(1, 0);
                     OnEndImmunity?.Invoke();
                 }
             }
@@ -221,8 +222,6 @@ namespace DefaultNamespace
             {
                 Disable();
                 
-                LeanTween.move(gameObject, collision.collider.transform, _transitionTime);
-                LeanTween.scale(gameObject, Vector3.zero, _transitionTime).setOnComplete(GameManager.instance.WinGame);
                 
                 _collisionTriggered = true;
             }
@@ -234,8 +233,7 @@ namespace DefaultNamespace
             {
                 Disable();
                 
-                LeanTween.move(gameObject, collision.transform, _transitionTime);
-                LeanTween.scale(gameObject, Vector3.zero, _transitionTime).setOnComplete(GameManager.instance.WinGame);
+
                 
                 _collisionTriggered = true;
             }
@@ -255,6 +253,7 @@ namespace DefaultNamespace
 
             _health -= hitDamage;
             _isImmune = true;
+            _animator.SetLayerWeight(1, 1);
             OnTakeDamage?.Invoke();
         }
     }

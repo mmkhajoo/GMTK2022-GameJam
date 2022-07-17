@@ -9,7 +9,8 @@ namespace DefaultNamespace
         public event Action OnJump;
         public event Action OnLand;
 
-        public Vector3 Direction => transform.right.normalized;
+        public Vector3 Direction => controller.Direction;
+    
 
         public float VerticalMove => _verticalMove;
         public float HorizontalMove => _horizontalMove;
@@ -68,6 +69,8 @@ namespace DefaultNamespace
             if (IsAttackDone)
                 _canAttack = true;
 
+            controller.CheckRotation(_horizontalMove);
+
             GetInputs();
         }
 
@@ -76,7 +79,7 @@ namespace DefaultNamespace
         {
             if (Input.GetMouseButton(0) && _canAttack)
             {
-                controller.SetAttackTimer();
+                controller.SetAttackState();
                 _attack = true;
                 _canAttack = false;
                 _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
