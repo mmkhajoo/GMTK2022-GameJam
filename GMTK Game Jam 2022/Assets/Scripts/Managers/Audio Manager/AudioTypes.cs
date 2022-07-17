@@ -23,7 +23,8 @@
         PaperImpact=18,
         SoulShardCollect=19,
         ButtonClicked=20,
-        Die=21
+        Die=21,
+        AxeSlash =22,
         
     }
 }
