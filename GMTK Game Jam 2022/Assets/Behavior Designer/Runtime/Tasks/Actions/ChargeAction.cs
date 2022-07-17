@@ -79,9 +79,13 @@ namespace BehaviorDesigner.Runtime.Tasks
                     if(collision.collider.gameObject.transform.parent.name == "DownGround" || collision.collider.gameObject.transform.parent.name == "UpGround")
                         return;
                 }
-                
-                //TODO : Add Damage Here;
-                
+
+                if (collision.gameObject.TryGetComponent<IDamageable>(out var target))
+                {
+                    if (target.CharacterType == CharacterType.Player)
+                        target.TakeDamage(_damage);
+                }
+
                 _collided = true;
                 _enemyMovement.ResetSpeed();
                 _enemyMovement.StopMovement();

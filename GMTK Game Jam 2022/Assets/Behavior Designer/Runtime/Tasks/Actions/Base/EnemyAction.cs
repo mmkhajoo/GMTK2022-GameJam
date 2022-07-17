@@ -1,5 +1,6 @@
 ﻿using Enemy;
 using UnityEngine;
+using WeaponSystem;
 
 namespace BehaviorDesigner.Runtime.Tasks
 {
@@ -7,7 +8,9 @@ namespace BehaviorDesigner.Runtime.Tasks
     {
         [SerializeField] private float _pauseTime;
 
-        [SerializeField] private int _damage;
+        [SerializeField] protected int _damage;
+
+        protected WeaponData _weaponData;
 
         private float _startTime;
         
@@ -16,6 +19,9 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override void OnStart()
         {
             base.OnStart();
+
+            var weaponManager = Resources.Load("WeaponManager") as WeaponManager;
+            _weaponData = weaponManager.Get(CharacterType.Boss);
 
             _startTime = Time.time;
 

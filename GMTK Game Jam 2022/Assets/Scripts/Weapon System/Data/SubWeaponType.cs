@@ -9,6 +9,8 @@ namespace WeaponSystem
         Katana = 0,
         Axe = 1,
         Bomb = 2,
-        Bullet = 3
+        Bullet = 3,
+        CastFireBall = 4,
+        FastFireBall = 5
     }
 }

@@ -329,6 +329,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &561129318
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 561129319}
+  m_Layer: 6
+  m_Name: ProjectileTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &561129319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561129318}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.78, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1206488709765967835}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!247 &690338644298335676
 ConstantForce2D:
   m_ObjectHideFlags: 0
@@ -395,7 +426,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: -1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -5510,7 +5541,13 @@ MonoBehaviour:
   m_GroundCheck: {fileID: 1206488708551566704}
   m_CeilingCheck: {fileID: 1206488709857152727}
   m_CrouchDisableCollider: {fileID: 0}
+  _porojectilePos: {fileID: 0}
+  _meleePosDetection: {fileID: 0}
+  _weaponSprites: []
   OnLandEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackEvent:
     m_PersistentCalls:
       m_Calls: []
   OnCrouchEvent:
@@ -5535,6 +5572,7 @@ Transform:
   - {fileID: 5142689436305059529}
   - {fileID: 2436176946066487215}
   - {fileID: 5142689436038082271}
+  - {fileID: 561129319}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5870,7 +5908,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -10743,7 +10781,7 @@ TrailRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: -1
   m_Time: 0.8
   m_Parameters:
@@ -10936,7 +10974,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -16480,7 +16518,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 7e586c4d3d49aca49b2c98ea0592750a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -16863,7 +16901,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -26609,7 +26647,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1672597379
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -26794,15 +26832,17 @@ MonoBehaviour:
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(216,30)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(-3.32714653,156.666656)"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.MoveTowardsWithDistance","NodeData":{"Offset":"(-266.087158,156.52179)"},"ID":2,"Name":"Move
-        Towards With Distance","Instant":true,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":0}}]},"DetachedTasks":[{"Type":"BehaviorDesigner.Runtime.Tasks.ChargeAction","NodeData":{"Offset":"(231.7391,423.4782)"},"ID":3,"Name":"Charge
-        Action","Instant":true,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":1},"Single_chargeSpeed":80,"Single_pauseTime":2,"Int32_damage":10}],"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":2}]}'
+      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(216,30)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(-3.32714653,156.666656)"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.FastFireBallAction","NodeData":{"Offset":"(23.1891022,274.642365)"},"ID":2,"Name":"Fast
+        Fire Ball Action","Instant":true,"Int32_fireBallNumber":5,"Transform_projectileInitPos":0,"GameObject_fireBallGO":1,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":null,"TransformmValue":2},"Single_pauseTime":0,"Int32_damage":0}]},"DetachedTasks":[{"Type":"BehaviorDesigner.Runtime.Tasks.MoveTowardsWithDistance","NodeData":{"Offset":"(-80,440)"},"ID":3,"Name":"Move
+        Towards With Distance","Instant":true,"SharedTransform_targetTransform":{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":3}}],"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"Player","IsShared":true,"TransformmValue":4}]}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
         startIndex: 
         dataPosition: 
         unityObjects:
+        - {fileID: 561129319}
+        - {fileID: 1688878390990307568, guid: cac6d4e290a3d744d81c8fdd7451ddb2, type: 3}
         - {fileID: 537475439}
         - {fileID: 537475439}
         - {fileID: 537475439}
